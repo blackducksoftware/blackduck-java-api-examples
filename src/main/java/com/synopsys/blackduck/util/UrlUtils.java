@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * Helper methods for encoding URL.
  *
- * @author David Nicholls - Black Duck Solution Architect
+ * @author David Nicholls - Synopsys Black Duck Technical Architect
  */
 public class UrlUtils {
 

@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * Model object for connection details to a single Black Duck instance.
  *
- * @author David Nicholls - Black Duck Solution Architect
+ * @author David Nicholls - Synopsys Black Duck Technical Architect
  */
 public class BlackDuckInstance {
     private String apiToken = null;

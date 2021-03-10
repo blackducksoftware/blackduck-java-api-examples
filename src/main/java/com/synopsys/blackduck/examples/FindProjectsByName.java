@@ -16,13 +16,13 @@ import java.util.Optional;
 /**
  * Finds projects by name..
  *
- * Usage Example : java -cp target\blackduck-java-api-examples-2020.6.0-jar-with-dependencies.jar com.synopsys.blackduck.examples.FindProjectsByName -apikey ZGY4MWU1ZjktMzk0ZC00OTRkLTk2ODYtYjFkMWU1OTk0Y2EzOmEyNzU5MDFjLWQxMjktNDRlZC1iNTFjLWY5M2VhZjU5NzMxYg== -url https://52.213.63.29 -trusthttps -projectname "Test Project"
+ * Usage Example : java -cp target\blackduck-java-api-examples-2020.6.0-jar-with-dependencies.jar com.synopsys.blackduck.examples.FindProjectsByName -apikey ZGY4MWU1ZjktMzk0ZC00OTRkLTk2ODYtYjFkMWU1OTk0Y2EzOmEyNzU5MDFjLWQxMjktNDRlZC1iNTFjLWY5M2VhZjU5NzMxYg== -url https://52.213.63.19 -trusthttps -projectname "Test Project"
  *
- * @author David Nicholls - Black Duck Solution Architect
+ * @author David Nicholls - Synopsys Black Duck Technical Architect
  */
 public class FindProjectsByName extends ValidateBlackDuckConnection {
 
-    private static Logger log = LoggerFactory.getLogger(FindProjectsByName.class);
+    private static final Logger log = LoggerFactory.getLogger(FindProjectsByName.class);
 
     /**
      * Calls the projects REST API to retrieve the projects that match by name.

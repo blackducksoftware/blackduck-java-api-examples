@@ -16,13 +16,13 @@ import java.util.Optional;
 /**
  * Lists projects and outputs the information to the log.
  *
- * Usage Example : java -cp target\blackduck-java-api-examples-2020.6.0-jar-with-dependencies.jar com.synopsys.blackduck.examples.ListProjects -apikey ZGY4MWU1ZjktMzk0ZC00OTRkLTk2ODYtYjFkMWU1OTk0Y2EzOmEyNzU5MDFjLWQxMjktNDRlZC1iNTFjLWY5M2VhZjU5NzMxYg== -url https://52.213.63.29 -trusthttps
+ * Usage Example : java -cp target\blackduck-java-api-examples-2020.6.0-jar-with-dependencies.jar com.synopsys.blackduck.examples.ListProjects -apikey ZGY4MWU1ZjktMzk0ZC00OTRkLTk2ODYtYjFkMWU1OTk0Y2EzOmEyNzU5MDFjLWQxMjktNDRlZC1iNTFjLWY5M2VhZjU5NzMxYg== -url https://52.213.63.19 -trusthttps
  *
- * @author David Nicholls - Black Duck Solution Architect
+ * @author David Nicholls - Synopsys Black Duck Technical Architect
  */
 public class ListProjects extends ValidateBlackDuckConnection {
 
-    private static Logger log = LoggerFactory.getLogger(ListProjects.class);
+    private static final Logger log = LoggerFactory.getLogger(ListProjects.class);
 
     /**
      * Calls the projects REST API to retrieve the projects.

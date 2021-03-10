@@ -21,16 +21,16 @@ import java.util.concurrent.Executors;
 /**
  * Rest Connector, connects to a Black Duck server and creates a service for calling and factory for creating more specific services e.g. License Service.
  *
- * @author David Nicholls - Black Duck Solution Architect
+ * @author David Nicholls - Synopsys Black Duck Technical Architect
  */
 public class BlackDuckRestConnector {
 
-    private static Logger log = LoggerFactory.getLogger(BlackDuckRestConnector.class);
+    private static final Logger log = LoggerFactory.getLogger(BlackDuckRestConnector.class);
 
-    private BlackDuckInstance blackDuckInstance;
-    private BlackDuckServicesFactory blackDuckServicesFactory;
-    private BlackDuckApiClient blackDuckApiClient;
-    private BlackDuckRequestFactory blackDuckRequestFactory;
+    private final BlackDuckInstance blackDuckInstance;
+    private final BlackDuckServicesFactory blackDuckServicesFactory;
+    private final BlackDuckApiClient blackDuckApiClient;
+    private final BlackDuckRequestFactory blackDuckRequestFactory;
 
     /**
      * Constructs a Rest Connector for the given Black Duck instance with a default log level of INFO.

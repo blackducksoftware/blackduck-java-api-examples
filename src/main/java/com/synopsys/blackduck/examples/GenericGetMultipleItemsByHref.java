@@ -19,13 +19,13 @@ import java.util.Optional;
  * Calls the REST API to perform a GET for a list of results given a URL link.
  * This URL link should be the URL to a list of Black Duck objects e.g. a component's versions, project's versions, project's tags, license terms, project custom fields etc.
  *
- * Usage Example : java -cp target\blackduck-java-api-examples-2020.6.0-jar-with-dependencies.jar com.synopsys.blackduck.examples.GenericGetMultipleItemsByHref -apikey ZGY4MWU1ZjktMzk0ZC00OTRkLTk2ODYtYjFkMWU1OTk0Y2EzOmEyNzU5MDFjLWQxMjktNDRlZC1iNTFjLWY5M2VhZjU5NzMxYg== -url https://52.213.63.29 -trusthttps -href "https://52.213.63.29/api/projects/2b4f1379-7958-4663-9b24-8f60e819869c/versions"
+ * Usage Example : java -cp target\blackduck-java-api-examples-2020.6.0-jar-with-dependencies.jar com.synopsys.blackduck.examples.GenericGetMultipleItemsByHref -apikey ZGY4MWU1ZjktMzk0ZC00OTRkLTk2ODYtYjFkMWU1OTk0Y2EzOmEyNzU5MDFjLWQxMjktNDRlZC1iNTFjLWY5M2VhZjU5NzMxYg== -url https://52.213.63.19 -trusthttps -href "https://52.213.63.29/api/projects/2b4f1379-7958-4663-9b24-8f60e819869c/versions"
  *
- * @author David Nicholls - Black Duck Solution Architect
+ * @author David Nicholls - Synopsys Black Duck Technical Architect
  */
 public class GenericGetMultipleItemsByHref extends ValidateBlackDuckConnection {
 
-    private static Logger log = LoggerFactory.getLogger(GenericGetMultipleItemsByHref.class);
+    private static final Logger log = LoggerFactory.getLogger(GenericGetMultipleItemsByHref.class);
 
     /**
      * Calls the REST API to retrieve multiple objects by href.

@@ -26,7 +26,7 @@ java -cp <dependencies-jar> com.synopsys.blackduck.examples.<ExampleClass> -apik
 e.g.
 
 `
-java -cp target\blackduck-java-api-examples-2021.2.0-jar-with-dependencies.jar com.synopsys.blackduck.examples.FindProjectsByName -apikey ZGY4MWU1ZjktMzk0ZC00OTRkLTk2ODYtYjFkMWU1OTk0Y2EzOmEyNzU5MDFjLWQxMjktNDRlZC1iNTFjLWY5M2VhZjU5NzMxYg== -url https://52.213.63.29 -trusthttps -projectname "Test Project"
+java -cp target\blackduck-java-api-examples-2021.2.0-jar-with-dependencies.jar com.synopsys.blackduck.examples.FindProjectsByName -apikey ZGY4MWU1ZjktMzk0ZC00OTRkLTk2ODYtYjFkMWU1OTk0Y2EzOmEyNzU5MDFjLWQxMjktNDRlZC1iNTFjLWY5M2VhZjU5NzMxYg== -url https://52.213.63.19 -trusthttps -projectname "Test Project"
 `
 
 All command line examples give usage information on parameters e.g.
@@ -57,6 +57,8 @@ usage: apikey
 - com.synopsys.blackduck.examples.FindKBComponentsByName - Find a component by name from the Black Duck KnowledgeBase.
 - com.synopsys.blackduck.examples.FindKBComponentsBySuiteID - Find a component within the Black Duck KnowledgeBase given it's Protex or Code Center Component ID.
 - com.synopsys.blackduck.examples.FindProjectsByName - Find projects by name.
+- com.synopsys.blackduck.examples.FindProjectVersionsModifiedInPeriod - Find project versions modified in last X hours by loading all projects, versions and the journal for each to determine changes made.
+- com.synopsys.blackduck.examples.FindProjectVersionsScannedInPeriod - Find project versions scanned in last X hours using the notifications API.
 - com.synopsys.blackduck.examples.GenericGetMultipleItemsByHref - Load a list of objects given the Black Duck URL.
 - com.synopsys.blackduck.examples.GenericGetSingleItemByHref - Load the JSON for a Black Duck object given the URL.
 - com.synopsys.blackduck.examples.GetProjectWithVersionsAndTagsByName - Load a project along with versions, tags and custom field values given the project name.

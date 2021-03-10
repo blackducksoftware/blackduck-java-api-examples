@@ -19,13 +19,13 @@ import java.util.*;
 /**
  * Finds KnowledgeBase components by name.  This will find components in the KnowledgeBase by name.
  *
- * Usage Example : java -cp target\blackduck-java-api-examples-2020.6.0-jar-with-dependencies.jar com.synopsys.blackduck.examples.FindKBComponentsByName -apikey ZGY4MWU1ZjktMzk0ZC00OTRkLTk2ODYtYjFkMWU1OTk0Y2EzOmEyNzU5MDFjLWQxMjktNDRlZC1iNTFjLWY5M2VhZjU5NzMxYg== -url https://52.213.63.29 -trusthttps -componentname "apache log4j"
+ * Usage Example : java -cp target\blackduck-java-api-examples-2020.6.0-jar-with-dependencies.jar com.synopsys.blackduck.examples.FindKBComponentsByName -apikey ZGY4MWU1ZjktMzk0ZC00OTRkLTk2ODYtYjFkMWU1OTk0Y2EzOmEyNzU5MDFjLWQxMjktNDRlZC1iNTFjLWY5M2VhZjU5NzMxYg== -url https://52.213.63.19 -trusthttps -componentname "apache log4j"
  *
- * @author David Nicholls - Black Duck Solution Architect
+ * @author David Nicholls - Synopsys Black Duck Technical Architect
  */
 public class FindKBComponentsByName extends ValidateBlackDuckConnection {
 
-    private static Logger log = LoggerFactory.getLogger(FindKBComponentsByName.class);
+    private static final Logger log = LoggerFactory.getLogger(FindKBComponentsByName.class);
 
     /**
      * Calls the components REST API to retrieve the KnowledgeBase components that match by name.

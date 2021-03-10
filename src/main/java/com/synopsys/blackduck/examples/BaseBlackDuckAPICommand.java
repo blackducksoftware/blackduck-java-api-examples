@@ -6,19 +6,24 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
 
 /**
  * Handles the common task of gathering the command line options for the API calls to a Black Duck instance.
  *
- * @author David Nicholls - Black Duck Solution Architect
+ * @author David Nicholls - Synopsys Black Duck Technical Architect
  */
 class BaseBlackDuckAPICommand {
 
-    private static Logger log = LoggerFactory.getLogger(BaseBlackDuckAPICommand.class);
+    private static final Logger log = LoggerFactory.getLogger(BaseBlackDuckAPICommand.class);
 
     static final String INTERNAL_API_HEADER_NAME = "Accept";
     static final String INTERNAL_API_HEADER_VALUE = "application/vnd.blackducksoftware.internal-1+json";
+
+    static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
 
     public static final String SEPARATOR = ",";
 
@@ -72,6 +77,20 @@ class BaseBlackDuckAPICommand {
             val = val.trim();
         }
         return val;
+    }
+
+    /**
+     * Parses a timestamp String to Date object.
+     * @param timestamp String timestamp e.g. 2021-02-18T16:29:57.065Z.
+     * @return Date representation.
+     */
+    static Date fromTimestampString(String timestamp) {
+        try {
+            return DATE_FORMATTER.parse(timestamp);
+        } catch (java.text.ParseException e) {
+            log.error("Failed to parse timestamp [" + timestamp + "] due to : " + e.getMessage(), e);
+            return null;
+        }
     }
 
     /**

@@ -18,13 +18,13 @@ import java.util.Optional;
  * Calls the REST API to perform a GET for a single result given a URL link.
  * This URL link should be the URL to a single Black Duck object e.g. a component, project, project version, license, license family etc.
  *
- * Usage Example : java -cp target\blackduck-java-api-examples-2020.6.0-jar-with-dependencies.jar com.synopsys.blackduck.examples.GenericGetSingleItemByHref -apikey ZGY4MWU1ZjktMzk0ZC00OTRkLTk2ODYtYjFkMWU1OTk0Y2EzOmEyNzU5MDFjLWQxMjktNDRlZC1iNTFjLWY5M2VhZjU5NzMxYg== -url https://52.213.63.29 -trusthttps -href "https://52.213.63.29/api/projects/2b4f1379-7958-4663-9b24-8f60e819869c"
+ * Usage Example : java -cp target\blackduck-java-api-examples-2020.6.0-jar-with-dependencies.jar com.synopsys.blackduck.examples.GenericGetSingleItemByHref -apikey ZGY4MWU1ZjktMzk0ZC00OTRkLTk2ODYtYjFkMWU1OTk0Y2EzOmEyNzU5MDFjLWQxMjktNDRlZC1iNTFjLWY5M2VhZjU5NzMxYg== -url https://52.213.63.19 -trusthttps -href "https://52.213.63.29/api/projects/2b4f1379-7958-4663-9b24-8f60e819869c"
  *
- * @author David Nicholls - Black Duck Solution Architect
+ * @author David Nicholls - Synopsys Black Duck Technical Architect
  */
 public class GenericGetSingleItemByHref extends ValidateBlackDuckConnection {
 
-    private static Logger log = LoggerFactory.getLogger(GenericGetSingleItemByHref.class);
+    private static final Logger log = LoggerFactory.getLogger(GenericGetSingleItemByHref.class);
 
     static final String HREF_PARAMETER = "href";
 
