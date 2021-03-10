@@ -68,7 +68,7 @@ public class FindProjectVersionsModifiedInPeriod extends ValidateBlackDuckConnec
                     for (ProjectVersionView projectVersion : projectVersions.get()) {
 
                         // Load the latest journal entry for this project version.
-                        log.info("Loading journal entries for [" + projectVersion.getHref().string() + "]");
+                        log.info("Loading latest journal entry for [" + projectVersion.getHref().string() + "]");
                         Optional<SimpleJournalView> latestJournalEntry = getLatestJournalForProjectVersion(restConnector, blackDuckApiClient, project, projectVersion, includeVulns);
                         if (latestJournalEntry.isPresent()) {
                             // Check the timestamp of the journal entry - we sorted by latest journal entry first.
