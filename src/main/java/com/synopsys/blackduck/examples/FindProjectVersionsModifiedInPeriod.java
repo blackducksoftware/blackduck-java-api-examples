@@ -5,7 +5,6 @@ import com.synopsys.blackduck.api.BlackDuckRestConnector;
 import com.synopsys.blackduck.util.UrlUtils;
 import com.synopsys.integration.blackduck.api.core.BlackDuckPath;
 import com.synopsys.integration.blackduck.api.core.BlackDuckResponse;
-import com.synopsys.integration.blackduck.api.core.BlackDuckView;
 import com.synopsys.integration.blackduck.api.core.response.BlackDuckPathMultipleResponses;
 import com.synopsys.integration.blackduck.api.generated.discovery.ApiDiscovery;
 import com.synopsys.integration.blackduck.api.generated.view.ProjectVersionView;
@@ -26,7 +25,8 @@ import java.util.*;
  *
  * Utilises the project API, project version API and journal API.
  *
- * Loads all projects and from there all versions on each project and calls the journal API for each project version to find what has changed.
+ * Loads all projects and from there all versions on each project and calls the journal API for each project version
+ * to find the latest journal entry and determines if that was in the period we are interested in.
  *
  * Usage Example : java -cp target\blackduck-java-api-examples-2021.2.0-jar-with-dependencies.jar com.synopsys.blackduck.examples.FindProjectVersionsModifiedInPeriod -apikey ZGY4MWU1ZjktMzk0ZC00OTRkLTk2ODYtYjFkMWU1OTk0Y2EzOmEyNzU5MDFjLWQxMjktNDRlZC1iNTFjLWY5M2VhZjU5NzMxYg== -url https://52.213.63.19 -trusthttps -period 24
  *
@@ -67,22 +67,21 @@ public class FindProjectVersionsModifiedInPeriod extends ValidateBlackDuckConnec
                 if (projectVersions.isPresent()) {
                     for (ProjectVersionView projectVersion : projectVersions.get()) {
 
-                        // Load the journal entries for this project version.
+                        // Load the latest journal entry for this project version.
                         log.info("Loading journal entries for [" + projectVersion.getHref().string() + "]");
-                        Optional<List<SimpleJournalView>> journalEntries = getJournalsForProjectVersion(restConnector, blackDuckApiClient, project, projectVersion, includeVulns);
-                        if (journalEntries.isPresent()) {
-                            for (SimpleJournalView journalView : journalEntries.get()) {
-
-                                // Check the timestamp of the journal entry - we sorted by latest journal entry first.
-                                if (journalView.timestamp != null) {
-                                    Date journalDate = fromTimestampString(journalView.timestamp);
-                                    if (journalDate != null && journalDate.getTime() > periodStart.getTime()) {
+                        Optional<SimpleJournalView> latestJournalEntry = getLatestJournalForProjectVersion(restConnector, blackDuckApiClient, project, projectVersion, includeVulns);
+                        if (latestJournalEntry.isPresent()) {
+                            // Check the timestamp of the journal entry - we sorted by latest journal entry first.
+                            if (latestJournalEntry.get().timestamp != null) {
+                                Date journalDate = fromTimestampString(latestJournalEntry.get().timestamp);
+                                if (journalDate != null) {
+                                    if (journalDate.getTime() > periodStart.getTime()) {
                                         // This journal entry happened after the period start.
-                                        log.info("Journal entry action [" + journalView.getAction() + "] for project version [" + projectVersion.getHref().string() + "] occurred after the period start.");
+                                        log.info("Journal entry action [" + latestJournalEntry.get().getAction() + "] for project version [" + projectVersion.getHref().string() + "] occurred after the period start.");
                                         uniqueProjectVersionsModified.add(projectVersion.getHref().string());
                                         break;
-                                    } else if (journalDate != null && periodStart.getTime() > journalDate.getTime()) {
-                                        // We sorted by timestamp, if this journal is older than the period we can now skip.
+                                    } else {
+                                        // We sorted by latest timestamp, if this journal is older than the period we can now skip.
                                         break;
                                     }
                                 }
@@ -120,34 +119,40 @@ public class FindProjectVersionsModifiedInPeriod extends ValidateBlackDuckConnec
     }
 
     /**
-     * Calls the journals REST API for a project version to retrieve the journals on the Black Duck instance.
+     * Calls the journals REST API for a project version to retrieve the latest single journal on the Black Duck instance.
      * @param restConnector BlackDuckRestConnector to connect.
      * @param blackDuckApiClient BlackDuckApiClient to connect so we do not construct it for every project version.
      * @param projectView the project to find journal entries for.
      * @param projectVersionView the project version to find journal entries for.
      * @param includeVulns whether to include vulnerability findings.
-     * @return List of SimpleJournalView objects.
+     * @return SimpleJournalView the latest journal entry.
      */
-    public Optional<List<SimpleJournalView>> getJournalsForProjectVersion(BlackDuckRestConnector restConnector, BlackDuckApiClient blackDuckApiClient, ProjectView projectView, ProjectVersionView projectVersionView, boolean includeVulns) {
+    public Optional<SimpleJournalView> getLatestJournalForProjectVersion(BlackDuckRestConnector restConnector, BlackDuckApiClient blackDuckApiClient, ProjectView projectView, ProjectVersionView projectVersionView, boolean includeVulns) {
         try {
-            // E.g. https://52.213.63.19/api/journal/projects/0c378012-b562-4dc1-ba56-5b267e9573dd/versions/8942913c-c4fa-498e-bb4a-ae3254b0ff7b?limit=10000&sort=timestamp desc&filter=journalObjectType:COMPONENT&filter=journalObjectType:SCAN&filter=journalObjectType:SNIPPET&filter=journalObjectType:SOURCE_FILE&filter=journalObjectType:KB_COMPONENT&filter=journalObjectType:KB_COMPONENT_VERSION&filter=journalObjectType:VERSION&filter=journalObjectType:VULNERABILITY
+            // E.g. https://52.213.63.19/api/journal/projects/0c378012-b562-4dc1-ba56-5b267e9573dd/versions/8942913c-c4fa-498e-bb4a-ae3254b0ff7b?limit=1&sort=timestamp desc&filter=journalObjectType:COMPONENT&filter=journalObjectType:SCAN&filter=journalObjectType:SNIPPET&filter=journalObjectType:SOURCE_FILE&filter=journalObjectType:KB_COMPONENT&filter=journalObjectType:KB_COMPONENT_VERSION&filter=journalObjectType:VERSION&filter=journalObjectType:VULNERABILITY
             BlackDuckRequestBuilder requestBuilder = restConnector.getBlackDuckRequestFactory().createCommonGetRequestBuilder();
 
             StringBuilder queryUrl = new StringBuilder();
             queryUrl.append(ApiDiscovery.JOURNAL_LINK.getPath()).append("/projects/").append(UrlUtils.getId(projectView));
             queryUrl.append("/versions/").append(UrlUtils.getId(projectVersionView));
             queryUrl.append("?sort=timestamp%20desc");
-            if (!includeVulns) {
-                // If we are including vulns we will not filter on type, if we are not then we need to ask for specific types of journal entry.
-                queryUrl.append("&filter=journalObjectType:COMPONENT&filter=journalObjectType:SCAN&filter=journalObjectType:SNIPPET&filter=journalObjectType:SOURCE_FILE&filter=journalObjectType:KB_COMPONENT&filter=journalObjectType:KB_COMPONENT_VERSION&filter=journalObjectType:VERSION");
+            if (includeVulns) {
+                // If we are including vulns.
+                queryUrl.append("&filter=journalObjectType:VULNERABILITY");
             }
-            queryUrl.append("&limit=9999");
+            queryUrl.append("&filter=journalObjectType:COMPONENT&filter=journalObjectType:SCAN&filter=journalObjectType:SNIPPET&filter=journalObjectType:SOURCE_FILE&filter=journalObjectType:KB_COMPONENT&filter=journalObjectType:KB_COMPONENT_VERSION&filter=journalObjectType:VERSION");
+
+            queryUrl.append("&limit=1");
 
             BlackDuckPathMultipleResponses<SimpleJournalView> groupResponses = new BlackDuckPathMultipleResponses<>(new BlackDuckPath(queryUrl.toString()), SimpleJournalView.class);
 
             List<SimpleJournalView> journalEntries = blackDuckApiClient.getAllResponses(groupResponses, requestBuilder);
 
-            return (journalEntries != null) ? Optional.of(journalEntries) : Optional.empty();
+            if (journalEntries != null && journalEntries.size() >= 1) {
+                return Optional.of(journalEntries.get(0));
+            } else {
+                return Optional.empty();
+            }
         } catch (IntegrationException e) {
             log.error("Failed to load journal entries for version [" + projectVersionView.getHref().string() + "] due to : " + e.getMessage(), e);
             return Optional.empty();
