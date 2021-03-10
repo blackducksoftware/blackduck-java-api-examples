@@ -79,7 +79,7 @@ public class FindProjectVersionsModifiedInPeriod extends ValidateBlackDuckConnec
                                         // This journal entry happened after the period start.
                                         log.info("Journal entry action [" + latestJournalEntry.get().getAction() + "] for project version [" + projectVersion.getHref().string() + "] occurred after the period start.");
                                         uniqueProjectVersionsModified.add(projectVersion.getHref().string());
-                                    } 
+                                    }
                                 }
                             }
                         }
@@ -137,7 +137,7 @@ public class FindProjectVersionsModifiedInPeriod extends ValidateBlackDuckConnec
                 queryUrl.append("&filter=journalObjectType:VULNERABILITY");
             }
             queryUrl.append("&filter=journalObjectType:COMPONENT&filter=journalObjectType:SCAN&filter=journalObjectType:SNIPPET&filter=journalObjectType:SOURCE_FILE&filter=journalObjectType:KB_COMPONENT&filter=journalObjectType:KB_COMPONENT_VERSION&filter=journalObjectType:VERSION");
-
+            // We only want to load 1 - the latest as we sorted by timestamp desc as we only care if the latest is within the period we are looking for.
             queryUrl.append("&limit=1");
 
             BlackDuckPathMultipleResponses<SimpleJournalView> groupResponses = new BlackDuckPathMultipleResponses<>(new BlackDuckPath(queryUrl.toString()), SimpleJournalView.class);
