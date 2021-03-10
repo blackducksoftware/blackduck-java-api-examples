@@ -79,11 +79,7 @@ public class FindProjectVersionsModifiedInPeriod extends ValidateBlackDuckConnec
                                         // This journal entry happened after the period start.
                                         log.info("Journal entry action [" + latestJournalEntry.get().getAction() + "] for project version [" + projectVersion.getHref().string() + "] occurred after the period start.");
                                         uniqueProjectVersionsModified.add(projectVersion.getHref().string());
-                                        break;
-                                    } else {
-                                        // We sorted by latest timestamp, if this journal is older than the period we can now skip.
-                                        break;
-                                    }
+                                    } 
                                 }
                             }
                         }
