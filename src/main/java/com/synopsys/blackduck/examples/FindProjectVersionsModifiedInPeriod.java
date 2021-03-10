@@ -173,7 +173,7 @@ public class FindProjectVersionsModifiedInPeriod extends ValidateBlackDuckConnec
             }
         } else {
             log.info("-----------------------");
-            log.error("No notifications found in the past [" + period + "] hours.");
+            log.error("No project versions modified in the past [" + period + "] hours.");
             log.info("-----------------------");
         }
     }
