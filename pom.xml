@@ -21,7 +21,7 @@
         <dependency>
             <groupId>com.synopsys.integration</groupId>
             <artifactId>blackduck-common</artifactId>
-            <version>53.0.0</version>
+            <version>58.2.3</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.blackducksoftware.bdio</groupId>

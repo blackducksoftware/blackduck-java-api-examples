@@ -6,6 +6,7 @@ import com.synopsys.integration.blackduck.api.manual.component.VersionBomCodeLoc
 import com.synopsys.integration.blackduck.api.manual.enumeration.NotificationType;
 import com.synopsys.integration.blackduck.api.manual.view.NotificationView;
 import com.synopsys.integration.blackduck.service.dataservice.NotificationService;
+import com.synopsys.integration.blackduck.service.request.NotificationEditor;
 import com.synopsys.integration.exception.IntegrationException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -43,7 +44,9 @@ public class FindProjectVersionsScannedInPeriod extends ValidateBlackDuckConnect
         // Add any notification types you wish to look for.
 
         // E.g. https://52.213.63.19/api/notifications?limit=10000&filter=notificationType:VERSION_BOM_CODE_LOCATION_BOM_COMPUTED&startDate=2021-02-18T16:29:30.964Z
-        List<NotificationView> matchingNotifications = notificationService.getFilteredNotifications(getDateForPeriodStart(period), new Date(), notificationTypesToInclude);
+        NotificationEditor editor = new NotificationEditor(getDateForPeriodStart(period), new Date(), notificationTypesToInclude);
+
+        List<NotificationView> matchingNotifications = notificationService.getAllNotifications(editor);
         return (matchingNotifications != null) ? Optional.of(matchingNotifications) : Optional.empty();
     }
 

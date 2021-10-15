@@ -53,6 +53,7 @@ usage: apikey
  -url <url>                   The Black Duck server url.
 
 # List of Examples
+- com.synopsys.blackduck.examples.DisableCopyrightsForProjectVersion - Load the BoM for a project version, for each origin of each component load and deactivate the copyrights.
 - com.synopsys.blackduck.examples.FindComponentsByName - Find a component by name that exists within the Black Duck instance.
 - com.synopsys.blackduck.examples.FindKBComponentsByName - Find a component by name from the Black Duck KnowledgeBase.
 - com.synopsys.blackduck.examples.FindKBComponentsBySuiteID - Find a component within the Black Duck KnowledgeBase given it's Protex or Code Center Component ID.
@@ -63,6 +64,7 @@ usage: apikey
 - com.synopsys.blackduck.examples.GenericGetSingleItemByHref - Load the JSON for a Black Duck object given the URL.
 - com.synopsys.blackduck.examples.GetProjectWithVersionsAndTagsByName - Load a project along with versions, tags and custom field values given the project name.
 - com.synopsys.blackduck.examples.GetUserAndAssignmentsByUsername - Load a user by username along with their roles and user group membership.
+- com.synopsys.blackduck.examples.ListBillOfMaterialsForProjectVersion - List the components in the Bill of Materials for a project version.
 - com.synopsys.blackduck.examples.ListProjects - List all projects.
 - com.synopsys.blackduck.examples.ListUsers - List all users.
 - com.synopsys.blackduck.examples.ValidateBlackDuckConnection - Validate the connection to Black Duck.

@@ -4,10 +4,10 @@ import com.google.gson.Gson;
 import com.synopsys.blackduck.api.BlackDuckInstance;
 import com.synopsys.blackduck.api.BlackDuckRestConnector;
 import com.synopsys.blackduck.util.UrlUtils;
-import com.synopsys.integration.blackduck.api.core.BlackDuckPath;
 import com.synopsys.integration.blackduck.api.core.BlackDuckView;
 import com.synopsys.integration.blackduck.service.BlackDuckApiClient;
 import com.synopsys.integration.exception.IntegrationException;
+import com.synopsys.integration.rest.HttpUrl;
 import com.synopsys.integration.rest.response.Response;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -37,11 +37,7 @@ public class FindKBComponentsByName extends ValidateBlackDuckConnection {
     public Optional<AutoCompleteResult[]> findKBComponents(BlackDuckRestConnector restConnector, String componentName) throws IntegrationException {
         BlackDuckApiClient blackDuckApiClient = restConnector.getBlackDuckApiClient();
 
-        BlackDuckPath autocomplete = new BlackDuckPath("/api/autocomplete/component");
-
-        BlackDuckPath componentsLink = new BlackDuckPath(autocomplete.getPath() + "?ownership=1&q=" + UrlUtils.encode(componentName));
-
-        Response response = blackDuckApiClient.get(componentsLink);
+        Response response = blackDuckApiClient.get(new HttpUrl(restConnector.getServerUrl() + "/api/autocomplete/component?ownership=1&q=" + UrlUtils.encode(componentName)));
 
         if (response.isStatusCodeSuccess()) {
             String content = response.getContentString();

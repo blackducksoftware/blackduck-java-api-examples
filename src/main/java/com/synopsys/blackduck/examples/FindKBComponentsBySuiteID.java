@@ -3,12 +3,10 @@ package com.synopsys.blackduck.examples;
 import com.synopsys.blackduck.api.BlackDuckInstance;
 import com.synopsys.blackduck.api.BlackDuckRestConnector;
 import com.synopsys.blackduck.util.UrlUtils;
-import com.synopsys.integration.blackduck.api.core.BlackDuckPath;
-import com.synopsys.integration.blackduck.api.core.response.BlackDuckPathMultipleResponses;
 import com.synopsys.integration.blackduck.api.core.BlackDuckResponse;
-import com.synopsys.integration.blackduck.api.generated.discovery.ApiDiscovery;
-import com.synopsys.integration.blackduck.http.BlackDuckRequestBuilder;
+import com.synopsys.integration.blackduck.api.core.response.UrlMultipleResponses;
 import com.synopsys.integration.exception.IntegrationException;
+import com.synopsys.integration.rest.HttpUrl;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -42,22 +40,18 @@ public class FindKBComponentsBySuiteID extends ValidateBlackDuckConnection {
      */
     public Optional<List<SimpleComponentView>> findKBComponents(BlackDuckRestConnector restConnector, String componentID, Optional<String> componentReleaseID) throws IntegrationException {
         try {
-            BlackDuckRequestBuilder requestBuilder = restConnector.getBlackDuckRequestFactory().createCommonGetRequestBuilder();
-
             StringBuilder queryUrl = new StringBuilder();
-            queryUrl.append(ApiDiscovery.COMPONENTS_LINK.getPath()).append("?q=bdsuite:").append(UrlUtils.encode(componentID));
+            queryUrl.append(restConnector.getBlackDuckServicesFactory().getApiDiscovery().metaComponentsLink().getUrl().string());
+            queryUrl.append("?q=bdsuite:").append(UrlUtils.encode(componentID));
 
             if (componentReleaseID.isPresent()) {
                 queryUrl.append("%23").append(UrlUtils.encode(componentReleaseID.get()));
             }
             queryUrl.append("&limit=9999");
 
-            BlackDuckPath componentMatchLink = new BlackDuckPath(queryUrl.toString());
+            log.info("Using [" + queryUrl.toString() + "] to find hub match for protex component");
 
-            log.info("Using [" + componentMatchLink.getPath() + "] to find hub match for protex component");
-
-            BlackDuckPathMultipleResponses<SimpleComponentView> componentResponses = new BlackDuckPathMultipleResponses<>(componentMatchLink, SimpleComponentView.class);
-            List<SimpleComponentView> components = restConnector.getBlackDuckApiClient().getAllResponses(componentResponses, requestBuilder);
+            List<SimpleComponentView> components = restConnector.getBlackDuckApiClient().getAllResponses(new UrlMultipleResponses<>(new HttpUrl(queryUrl.toString()), SimpleComponentView.class));
 
             return (components != null) ? Optional.of(components) : Optional.empty();
         } catch (IntegrationException e) {

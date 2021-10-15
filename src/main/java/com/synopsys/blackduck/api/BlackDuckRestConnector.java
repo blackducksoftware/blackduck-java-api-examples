@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.synopsys.integration.blackduck.configuration.BlackDuckServerConfig;
 import com.synopsys.integration.blackduck.configuration.BlackDuckServerConfigBuilder;
-import com.synopsys.integration.blackduck.http.BlackDuckRequestFactory;
 import com.synopsys.integration.blackduck.http.client.BlackDuckHttpClient;
 import com.synopsys.integration.blackduck.service.BlackDuckApiClient;
 import com.synopsys.integration.blackduck.service.BlackDuckServicesFactory;
@@ -30,7 +29,6 @@ public class BlackDuckRestConnector {
     private final BlackDuckInstance blackDuckInstance;
     private final BlackDuckServicesFactory blackDuckServicesFactory;
     private final BlackDuckApiClient blackDuckApiClient;
-    private final BlackDuckRequestFactory blackDuckRequestFactory;
 
     /**
      * Constructs a Rest Connector for the given Black Duck instance with a default log level of INFO.
@@ -52,7 +50,6 @@ public class BlackDuckRestConnector {
         BlackDuckServerConfig blackDuckServerConfig = createBlackDuckServerConfig(blackDuckInstance);
         IntLogger intLogger = createIntLogger(logLevel);
         this.blackDuckServicesFactory = createBlackDuckServicesFactory(blackDuckServerConfig, intLogger);
-        this.blackDuckRequestFactory = this.blackDuckServicesFactory.getRequestFactory();
         this.blackDuckApiClient = blackDuckServicesFactory.getBlackDuckApiClient();
     }
 
@@ -100,8 +97,7 @@ public class BlackDuckRestConnector {
 
         log.info("Creating Black Duck Services Factory");
 
-        return new BlackDuckServicesFactory(intEnvironmentVariables, gson, objectMapper, executorService,
-                blackDuckHttpClient, logger, BlackDuckServicesFactory.createDefaultRequestFactory());
+        return new BlackDuckServicesFactory(intEnvironmentVariables, executorService, logger, blackDuckHttpClient, gson, objectMapper);
     }
 
     /**
@@ -128,13 +124,5 @@ public class BlackDuckRestConnector {
      */
     public BlackDuckApiClient getBlackDuckApiClient() {
         return blackDuckApiClient;
-    }
-
-    /**
-     * Returns the BlackDuckRequestFactory, used to create requests.
-     * @return BlackDuckRequestFactory.
-     */
-    public BlackDuckRequestFactory getBlackDuckRequestFactory() {
-        return blackDuckRequestFactory;
     }
 }

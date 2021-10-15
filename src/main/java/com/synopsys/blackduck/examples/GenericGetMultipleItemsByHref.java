@@ -4,6 +4,7 @@ import com.synopsys.blackduck.api.BlackDuckInstance;
 import com.synopsys.blackduck.api.BlackDuckRestConnector;
 import com.synopsys.integration.blackduck.api.core.BlackDuckView;
 import com.synopsys.integration.blackduck.api.core.ResourceLink;
+import com.synopsys.integration.blackduck.api.core.response.UrlMultipleResponses;
 import com.synopsys.integration.blackduck.service.BlackDuckApiClient;
 import com.synopsys.integration.exception.IntegrationException;
 import com.synopsys.integration.rest.HttpUrl;
@@ -38,7 +39,7 @@ public class GenericGetMultipleItemsByHref extends ValidateBlackDuckConnection {
         BlackDuckApiClient blackDuckApiClient = restConnector.getBlackDuckApiClient();
         HttpUrl url = new HttpUrl(href);
 
-        List<BlackDuckView> views = blackDuckApiClient.getAllResponses(url, BlackDuckView.class);
+        List<BlackDuckView> views = blackDuckApiClient.getAllResponses(new UrlMultipleResponses<>(url, BlackDuckView.class));
         return (views != null) ? Optional.of(views) : Optional.empty();
     }
 

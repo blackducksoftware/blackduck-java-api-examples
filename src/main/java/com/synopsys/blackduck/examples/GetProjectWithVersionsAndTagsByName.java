@@ -2,13 +2,11 @@ package com.synopsys.blackduck.examples;
 
 import com.synopsys.blackduck.api.BlackDuckInstance;
 import com.synopsys.blackduck.api.BlackDuckRestConnector;
-import com.synopsys.integration.blackduck.api.core.BlackDuckPath;
 import com.synopsys.integration.blackduck.api.core.ResourceLink;
-import com.synopsys.integration.blackduck.api.core.response.BlackDuckPathMultipleResponses;
 import com.synopsys.integration.blackduck.api.core.BlackDuckView;
+import com.synopsys.integration.blackduck.api.core.response.UrlMultipleResponses;
 import com.synopsys.integration.blackduck.api.generated.enumeration.ProjectCloneCategoriesType;
 import com.synopsys.integration.blackduck.api.generated.view.*;
-import com.synopsys.integration.blackduck.http.BlackDuckRequestBuilder;
 import com.synopsys.integration.blackduck.service.dataservice.ProjectService;
 import com.synopsys.integration.blackduck.service.dataservice.TagService;
 import com.synopsys.integration.exception.IntegrationException;
@@ -92,11 +90,7 @@ public class GetProjectWithVersionsAndTagsByName extends ValidateBlackDuckConnec
         if (blackDuckView != null) {
             HttpUrl customFieldsLink = blackDuckView.getFirstLink("custom-fields");
             if (customFieldsLink != null) {
-                BlackDuckRequestBuilder requestBuilder = restConnector.getBlackDuckRequestFactory().createCommonGetRequestBuilder();
-
-                BlackDuckPathMultipleResponses<CustomFieldView> groupResponses = new BlackDuckPathMultipleResponses<>(new BlackDuckPath(customFieldsLink.string()), CustomFieldView.class);
-
-                List<CustomFieldView> customFields = restConnector.getBlackDuckApiClient().getAllResponses(groupResponses, requestBuilder);
+                List<CustomFieldView> customFields = restConnector.getBlackDuckApiClient().getAllResponses(new UrlMultipleResponses<>(new HttpUrl(customFieldsLink.string()), CustomFieldView.class));
 
                 return (customFields != null) ? Optional.of(customFields) : Optional.empty();
             }

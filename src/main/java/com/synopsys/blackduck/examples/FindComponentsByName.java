@@ -3,13 +3,12 @@ package com.synopsys.blackduck.examples;
 import com.synopsys.blackduck.api.BlackDuckInstance;
 import com.synopsys.blackduck.api.BlackDuckRestConnector;
 import com.synopsys.blackduck.util.UrlUtils;
-import com.synopsys.integration.blackduck.api.core.BlackDuckPath;
-import com.synopsys.integration.blackduck.api.core.response.BlackDuckPathMultipleResponses;
-import com.synopsys.integration.blackduck.api.generated.discovery.ApiDiscovery;
+import com.synopsys.integration.blackduck.api.core.response.UrlMultipleResponses;
 import com.synopsys.integration.blackduck.api.generated.view.ComponentView;
 import com.synopsys.integration.blackduck.http.BlackDuckRequestBuilder;
 import com.synopsys.integration.blackduck.service.BlackDuckApiClient;
 import com.synopsys.integration.exception.IntegrationException;
+import com.synopsys.integration.rest.HttpUrl;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
@@ -40,14 +39,11 @@ public class FindComponentsByName extends ValidateBlackDuckConnection {
      */
     public Optional<List<ComponentView>> findComponents(BlackDuckRestConnector restConnector, String componentName) throws IntegrationException {
         BlackDuckApiClient blackDuckApiClient = restConnector.getBlackDuckApiClient();
-
-        BlackDuckRequestBuilder requestBuilder = restConnector.getBlackDuckRequestFactory().createCommonGetRequestBuilder();
-        BlackDuckPath componentsLink = new BlackDuckPath(ApiDiscovery.COMPONENTS_LINK.getPath() + "?q=name:" + UrlUtils.encode(componentName));
+        BlackDuckRequestBuilder requestBuilder = new BlackDuckRequestBuilder();
         requestBuilder.addHeader(INTERNAL_API_HEADER_NAME, INTERNAL_API_HEADER_VALUE);
-
-        BlackDuckPathMultipleResponses<ComponentView> componentResponses = new BlackDuckPathMultipleResponses<>(componentsLink, ComponentView.class);
-
-        List<ComponentView> matchingComponents = blackDuckApiClient.getAllResponses(componentResponses, requestBuilder);
+        HttpUrl url = new HttpUrl(restConnector.getBlackDuckServicesFactory().getApiDiscovery().metaComponentsLink().getUrl().toString() + "?q=name:" + UrlUtils.encode(componentName));
+        ;
+        List<ComponentView> matchingComponents = blackDuckApiClient.getAllResponses(requestBuilder.buildBlackDuckRequest(new UrlMultipleResponses<>(url, ComponentView.class)));
 
         return (matchingComponents != null) ? Optional.of(matchingComponents) : Optional.empty();
     }

@@ -2,7 +2,6 @@ package com.synopsys.blackduck.examples;
 
 import com.synopsys.blackduck.api.BlackDuckInstance;
 import com.synopsys.blackduck.api.BlackDuckRestConnector;
-import com.synopsys.integration.blackduck.api.generated.discovery.ApiDiscovery;
 import com.synopsys.integration.blackduck.api.generated.view.UserView;
 import com.synopsys.integration.blackduck.service.BlackDuckApiClient;
 import com.synopsys.integration.exception.IntegrationException;
@@ -35,7 +34,7 @@ public class ListUsers extends ValidateBlackDuckConnection {
     public List<UserView> getUsers(BlackDuckRestConnector restConnector) throws IntegrationException {
         BlackDuckApiClient blackDuckApiClient = restConnector.getBlackDuckApiClient();
 
-        return blackDuckApiClient.getAllResponses(ApiDiscovery.USERS_LINK_RESPONSE);
+        return blackDuckApiClient.getAllResponses(restConnector.getBlackDuckServicesFactory().getApiDiscovery().metaUsersLink());
     }
 
     /**

@@ -2,13 +2,11 @@ package com.synopsys.blackduck.examples;
 
 import com.synopsys.blackduck.api.BlackDuckInstance;
 import com.synopsys.blackduck.api.BlackDuckRestConnector;
-import com.synopsys.integration.blackduck.api.core.BlackDuckPath;
 import com.synopsys.integration.blackduck.api.core.ResourceLink;
-import com.synopsys.integration.blackduck.api.core.response.BlackDuckPathMultipleResponses;
+import com.synopsys.integration.blackduck.api.core.response.UrlMultipleResponses;
 import com.synopsys.integration.blackduck.api.generated.view.RoleAssignmentView;
 import com.synopsys.integration.blackduck.api.generated.view.UserGroupView;
 import com.synopsys.integration.blackduck.api.generated.view.UserView;
-import com.synopsys.integration.blackduck.http.BlackDuckRequestBuilder;
 import com.synopsys.integration.blackduck.service.BlackDuckApiClient;
 import com.synopsys.integration.blackduck.service.dataservice.UserGroupService;
 import com.synopsys.integration.exception.IntegrationException;
@@ -60,11 +58,7 @@ public class GetUserAndAssignmentsByUsername extends ValidateBlackDuckConnection
 
             HttpUrl userGroupsLink = user.get().getFirstLink("usergroups");
             if (userGroupsLink != null) {
-                BlackDuckRequestBuilder requestBuilder = restConnector.getBlackDuckRequestFactory().createCommonGetRequestBuilder();
-
-                BlackDuckPathMultipleResponses<UserGroupView> groupResponses = new BlackDuckPathMultipleResponses<>(new BlackDuckPath(userGroupsLink.string()), UserGroupView.class);
-
-                List<UserGroupView> matchingGroups = blackDuckApiClient.getAllResponses(groupResponses, requestBuilder);
+                List<UserGroupView> matchingGroups = blackDuckApiClient.getAllResponses(new UrlMultipleResponses(new HttpUrl(userGroupsLink.string()), UserGroupView.class));
 
                 return (matchingGroups != null) ? Optional.of(matchingGroups) : Optional.empty();
             }

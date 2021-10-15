@@ -3,16 +3,14 @@ package com.synopsys.blackduck.examples;
 import com.synopsys.blackduck.api.BlackDuckInstance;
 import com.synopsys.blackduck.api.BlackDuckRestConnector;
 import com.synopsys.blackduck.util.UrlUtils;
-import com.synopsys.integration.blackduck.api.core.BlackDuckPath;
 import com.synopsys.integration.blackduck.api.core.BlackDuckResponse;
-import com.synopsys.integration.blackduck.api.core.response.BlackDuckPathMultipleResponses;
-import com.synopsys.integration.blackduck.api.generated.discovery.ApiDiscovery;
+import com.synopsys.integration.blackduck.api.core.response.UrlMultipleResponses;
 import com.synopsys.integration.blackduck.api.generated.view.ProjectVersionView;
 import com.synopsys.integration.blackduck.api.generated.view.ProjectView;
-import com.synopsys.integration.blackduck.http.BlackDuckRequestBuilder;
 import com.synopsys.integration.blackduck.service.BlackDuckApiClient;
 import com.synopsys.integration.blackduck.service.dataservice.ProjectService;
 import com.synopsys.integration.exception.IntegrationException;
+import com.synopsys.integration.rest.HttpUrl;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
@@ -126,10 +124,10 @@ public class FindProjectVersionsModifiedInPeriod extends ValidateBlackDuckConnec
     public Optional<SimpleJournalView> getLatestJournalForProjectVersion(BlackDuckRestConnector restConnector, BlackDuckApiClient blackDuckApiClient, ProjectView projectView, ProjectVersionView projectVersionView, boolean includeVulns) {
         try {
             // E.g. https://52.213.63.19/api/journal/projects/0c378012-b562-4dc1-ba56-5b267e9573dd/versions/8942913c-c4fa-498e-bb4a-ae3254b0ff7b?limit=1&sort=timestamp desc&filter=journalObjectType:COMPONENT&filter=journalObjectType:SCAN&filter=journalObjectType:SNIPPET&filter=journalObjectType:SOURCE_FILE&filter=journalObjectType:KB_COMPONENT&filter=journalObjectType:KB_COMPONENT_VERSION&filter=journalObjectType:VERSION&filter=journalObjectType:VULNERABILITY
-            BlackDuckRequestBuilder requestBuilder = restConnector.getBlackDuckRequestFactory().createCommonGetRequestBuilder();
 
             StringBuilder queryUrl = new StringBuilder();
-            queryUrl.append(ApiDiscovery.JOURNAL_LINK.getPath()).append("/projects/").append(UrlUtils.getId(projectView));
+            queryUrl.append(restConnector.getBlackDuckServicesFactory().getApiDiscovery().metaJournalLink().getUrl().string());
+            queryUrl.append("/projects/").append(UrlUtils.getId(projectView));
             queryUrl.append("/versions/").append(UrlUtils.getId(projectVersionView));
             queryUrl.append("?sort=timestamp%20desc");
             if (includeVulns) {
@@ -140,9 +138,7 @@ public class FindProjectVersionsModifiedInPeriod extends ValidateBlackDuckConnec
             // We only want to load 1 - the latest as we sorted by timestamp desc as we only care if the latest is within the period we are looking for.
             queryUrl.append("&limit=1");
 
-            BlackDuckPathMultipleResponses<SimpleJournalView> groupResponses = new BlackDuckPathMultipleResponses<>(new BlackDuckPath(queryUrl.toString()), SimpleJournalView.class);
-
-            List<SimpleJournalView> journalEntries = blackDuckApiClient.getAllResponses(groupResponses, requestBuilder);
+            List<SimpleJournalView> journalEntries = blackDuckApiClient.getAllResponses(new UrlMultipleResponses<>(new HttpUrl(queryUrl.toString()), SimpleJournalView.class));
 
             if (journalEntries != null && journalEntries.size() >= 1) {
                 return Optional.of(journalEntries.get(0));
