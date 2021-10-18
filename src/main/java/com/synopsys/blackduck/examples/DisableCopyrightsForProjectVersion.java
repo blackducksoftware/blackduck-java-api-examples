@@ -18,10 +18,7 @@ import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Disables copyrights for all component origins within a project version's bill of materials.  Used as an example
@@ -36,6 +33,8 @@ public class DisableCopyrightsForProjectVersion extends ValidateBlackDuckConnect
 
     private static final String PROJECT_VERSION_URL_PARAMETER = "projectVersionUrl";
     private static final String ONLY_DISABLE_MULTIPLE_COPYRIGHTS = "ignoreSingleCopyrights";
+
+    private static final int RETRY_COUNT = 5;
 
     /**
      * Calls the BoM entries for a project version.
@@ -54,16 +53,20 @@ public class DisableCopyrightsForProjectVersion extends ValidateBlackDuckConnect
     }
 
     public Optional<List<OriginView>> getAllOriginsForComponent(BlackDuckRestConnector restConnector, ProjectVersionComponentView component) {
-        HttpUrl link = component.getFirstLink("origins");
-        if (link != null) {
-            try {
-                List<OriginView> views = restConnector.getBlackDuckApiClient().getAllResponses(new UrlMultipleResponses<>(link, OriginView.class));
-                return (views != null) ? Optional.of(views) : Optional.empty();
-            } catch (IntegrationException e) {
-                log.error("Failed to load all origins for component [" + component.getComponentName() + "] due to : " + e.getMessage(), e);
+        try {
+            HttpUrl link = component.getFirstLink("origins");
+            if (link != null) {
+                try {
+                    List<OriginView> views = restConnector.getBlackDuckApiClient().getAllResponses(new UrlMultipleResponses<>(link, OriginView.class));
+                    return (views != null) ? Optional.of(views) : Optional.empty();
+                } catch (IntegrationException e) {
+                    log.error("Failed to load all origins for component [" + component.getComponentName() + "] due to : " + e.getMessage(), e);
+                }
             }
+            return Optional.empty();
+        } catch (NoSuchElementException e) {
+            return Optional.empty();
         }
-        return Optional.empty();
     }
 
     public Optional<List<ComponentVersionOriginCopyright>> getCopyrightsForOrigin(BlackDuckRestConnector restConnector, HttpUrl originUrl) {
@@ -97,24 +100,25 @@ public class DisableCopyrightsForProjectVersion extends ValidateBlackDuckConnect
         return false;
     }
 
-    public void validateDisabledCopyrightsForOrigin(BlackDuckRestConnector restConnector, HttpUrl originUrl, boolean onlyDisableMultiple, Stats stats) {
+    public List<String> validateDisabledCopyrightsForOrigin(BlackDuckRestConnector restConnector, HttpUrl originUrl, boolean onlyDisableMultiple) {
         // Reload the copyrights.
+        List<String> validationFailures = new ArrayList<>();
         Optional<List<ComponentVersionOriginCopyright>> copyrights = getCopyrightsForOrigin(restConnector, originUrl);
         if (copyrights.isPresent() && copyrights.get().size() > 0) {
             // For each copyright validate it is deactivated.
             if (copyrights.get().size() == 1 && onlyDisableMultiple) {
                 // Do nothing.
             } else {
+
                 for (ComponentVersionOriginCopyright copyright : copyrights.get()) {
                     if (!Boolean.FALSE.equals(copyright.getActive())) {
-                        stats.failures.add(copyright.getMeta().getHref().string());
-                        stats.validationFailures++;
-                        log.error("Validation failed - copyright is not disabled after PUT to active=false for [" + copyright.getMeta().getHref().string() + "]");
+                        validationFailures.add(copyright.getMeta().getHref().string());
                     }
                 }
             }
 
         }
+        return validationFailures;
     }
 
     public void handleBoMComponent(BlackDuckRestConnector restConnector, ProjectVersionComponentView bomItem, Stats stats, boolean onlyDisableMultiple) {
@@ -125,7 +129,7 @@ public class DisableCopyrightsForProjectVersion extends ValidateBlackDuckConnect
             if (allOrigins.isPresent()) {
                 for (OriginView origin : allOrigins.get()) {
                     stats.origins++;
-                    handleComponentOrigin(restConnector, origin.getMeta().getHref(), stats, onlyDisableMultiple);
+                    handleComponentOrigin(restConnector, origin.getMeta().getHref(), stats, onlyDisableMultiple, 1);
                 }
             }
         } else {
@@ -144,20 +148,22 @@ public class DisableCopyrightsForProjectVersion extends ValidateBlackDuckConnect
                     }
                 }
                 if (originUrl != null) {
-                    handleComponentOrigin(restConnector, originUrl, stats, onlyDisableMultiple);
+                    handleComponentOrigin(restConnector, originUrl, stats, onlyDisableMultiple, 1);
                 }
             }
         }
     }
 
-    public void handleComponentOrigin(BlackDuckRestConnector restConnector, HttpUrl originUrl, Stats stats, boolean onlyDisableMultiple) {
+    public void handleComponentOrigin(BlackDuckRestConnector restConnector, HttpUrl originUrl, Stats stats, boolean onlyDisableMultiple, int attempt) {
         // For each origin get the copyrights
         Optional<List<ComponentVersionOriginCopyright>> copyrights = getCopyrightsForOrigin(restConnector, originUrl);
         if (copyrights.isPresent() && copyrights.get().size() > 0) {
             // For each copyright deactivate it.
             if (copyrights.get().size() == 1 && onlyDisableMultiple) {
-                stats.copyrights++;
-                log.info("Single copyright - skipping at user's request for [" + originUrl.string() + "]");
+                if (attempt == 1) {
+                    stats.copyrights++;
+                    log.info("Single copyright - skipping at user's request for [" + originUrl.string() + "]");
+                }
             } else {
                 boolean anyChanged = false;
                 for (ComponentVersionOriginCopyright copyright : copyrights.get()) {
@@ -168,7 +174,21 @@ public class DisableCopyrightsForProjectVersion extends ValidateBlackDuckConnect
                     }
                 }
                 if (anyChanged) {
-                    validateDisabledCopyrightsForOrigin(restConnector, originUrl, onlyDisableMultiple, stats);
+                    List<String> validationFailures = validateDisabledCopyrightsForOrigin(restConnector, originUrl, onlyDisableMultiple);
+                    if (validationFailures.size() > 0) {
+                        if (attempt <= RETRY_COUNT) {
+                            attempt++;
+                            log.info("Retrying attempt number [" + attempt + "] - there were [" + validationFailures.size() + "] copyrights still enabled after PUT to disable them - component [" + originUrl + "]");
+                            handleComponentOrigin(restConnector, originUrl, stats, onlyDisableMultiple, attempt);
+                        } else {
+                            log.info("Retry maximum reached - still [" + validationFailures.size() + "] copyrights enabled despite retrying to disable them [" + RETRY_COUNT + "] times.");
+                            for (String validationFailure : validationFailures) {
+                                stats.validationFailures++;
+                                log.error("Validation failed - copyright is not disabled after PUT to active=false for [" + validationFailure + "]");
+                            }
+
+                        }
+                    }
                 }
             }
 
