@@ -26,7 +26,7 @@ import java.util.*;
  * Loads all projects and from there all versions on each project and calls the journal API for each project version
  * to find the latest journal entry and determines if that was in the period we are interested in.
  *
- * Usage Example : java -cp target\blackduck-java-api-examples-2021.2.0-jar-with-dependencies.jar com.synopsys.blackduck.examples.FindProjectVersionsModifiedInPeriod -apikey ZGY4MWU1ZjktMzk0ZC00OTRkLTk2ODYtYjFkMWU1OTk0Y2EzOmEyNzU5MDFjLWQxMjktNDRlZC1iNTFjLWY5M2VhZjU5NzMxYg== -url https://52.213.63.19 -trusthttps -period 24
+ * Usage Example : java -cp target\blackduck-java-api-examples-2021.10.0-jar-with-dependencies.jar com.synopsys.blackduck.examples.FindProjectVersionsModifiedInPeriod -apikey ZGY4MWU1ZjktMzk0ZC00OTRkLTk2ODYtYjFkMWU1OTk0Y2EzOmEyNzU5MDFjLWQxMjktNDRlZC1iNTFjLWY5M2VhZjU5NzMxYg== -url https://52.213.63.19 -trusthttps -period 24
  *
  * @author David Nicholls - Synopsys Black Duck Technical Architect
  */

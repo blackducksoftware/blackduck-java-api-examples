@@ -18,7 +18,7 @@ import java.util.*;
 /**
  * Finds project versions that have been scanned in the last X hours.  Utilises the notifications API.
  *
- * Usage Example : java -cp target\blackduck-java-api-examples-2021.2.0-jar-with-dependencies.jar com.synopsys.blackduck.examples.FindProjectVersionsScannedInPeriod -apikey ZGY4MWU1ZjktMzk0ZC00OTRkLTk2ODYtYjFkMWU1OTk0Y2EzOmEyNzU5MDFjLWQxMjktNDRlZC1iNTFjLWY5M2VhZjU5NzMxYg== -url https://52.213.63.19 -trusthttps -period 24
+ * Usage Example : java -cp target\blackduck-java-api-examples-2021.10.0-jar-with-dependencies.jar com.synopsys.blackduck.examples.FindProjectVersionsScannedInPeriod -apikey ZGY4MWU1ZjktMzk0ZC00OTRkLTk2ODYtYjFkMWU1OTk0Y2EzOmEyNzU5MDFjLWQxMjktNDRlZC1iNTFjLWY5M2VhZjU5NzMxYg== -url https://52.213.63.19 -trusthttps -period 24
  *
  * @author David Nicholls - Synopsys Black Duck Technical Architect
  */
