@@ -42,7 +42,7 @@ public class FindComponentsByName extends ValidateBlackDuckConnection {
         BlackDuckRequestBuilder requestBuilder = new BlackDuckRequestBuilder();
         requestBuilder.addHeader(INTERNAL_API_HEADER_NAME, INTERNAL_API_HEADER_VALUE);
         HttpUrl url = new HttpUrl(restConnector.getBlackDuckServicesFactory().getApiDiscovery().metaComponentsLink().getUrl().toString() + "?q=name:" + UrlUtils.encode(componentName));
-        ;
+
         List<ComponentView> matchingComponents = blackDuckApiClient.getAllResponses(requestBuilder.buildBlackDuckRequest(new UrlMultipleResponses<>(url, ComponentView.class)));
 
         return (matchingComponents != null) ? Optional.of(matchingComponents) : Optional.empty();
