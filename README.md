@@ -53,6 +53,7 @@ usage: apikey
  -url <url>                   The Black Duck server url.
 
 # List of Examples
+- com.synopsys.blackduck.examples.DeleteProjects - Delete all projects with a name or application ID that matches a regular expression.
 - com.synopsys.blackduck.examples.DisableCopyrightsForProjectVersion - Load the BoM for a project version, for each origin of each component load and deactivate the copyrights.
 - com.synopsys.blackduck.examples.FindComponentsByName - Find a component by name that exists within the Black Duck instance.
 - com.synopsys.blackduck.examples.FindKBComponentsByName - Find a component by name from the Black Duck KnowledgeBase.
@@ -66,5 +67,7 @@ usage: apikey
 - com.synopsys.blackduck.examples.GetUserAndAssignmentsByUsername - Load a user by username along with their roles and user group membership.
 - com.synopsys.blackduck.examples.ListBillOfMaterialsForProjectVersion - List the components in the Bill of Materials for a project version.
 - com.synopsys.blackduck.examples.ListProjects - List all projects.
+- com.synopsys.blackduck.examples.ListProjectsAndApplicationId - List projects and the projects application ID to CSV file.
+- com.synopsys.blackduck.examples.ListProjectsNotAssociatedWithUserGroup - List projects that are not referenced in any user group in a CSV file.
 - com.synopsys.blackduck.examples.ListUsers - List all users.
 - com.synopsys.blackduck.examples.ValidateBlackDuckConnection - Validate the connection to Black Duck.
