@@ -71,3 +71,10 @@ usage: apikey
 - com.synopsys.blackduck.examples.ListProjectsNotAssociatedWithUserGroup - List projects that are not referenced in any user group in a CSV file.
 - com.synopsys.blackduck.examples.ListUsers - List all users.
 - com.synopsys.blackduck.examples.ValidateBlackDuckConnection - Validate the connection to Black Duck.
+
+# Troubleshooting
+If you get this error message please check the location of the Jar file as the -cp entry is not finding it :
+- _Error: Could not find or load main class com.synopsys.blackduck.examples.XXXXX_
+
+When you invoke Java in this way you are asking for the Jar file to be placed on the classpath and then to invoke a particular main class.  If Java cannot find the Jar file it will not add it to the classpath and will not give an error.
+In this case Java cannot find the main class as it did not load the Jar file, please check the location you are pointing to for the -cp entry and ensure it points to the Jar file.
