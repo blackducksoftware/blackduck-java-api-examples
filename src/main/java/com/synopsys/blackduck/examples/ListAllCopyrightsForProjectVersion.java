@@ -22,7 +22,7 @@ import java.util.*;
 /**
  * Lists copyrights for all component origins within a project version's bill of materials.  Used as an example
  *
- * Usage Example : java -cp target\blackduck-java-api-examples-2021.10.0-jar-with-dependencies.jar com.synopsys.blackduck.examples.ListAllCopyrightsForProjectVersion -apikey ZGY4MWU1ZjktMzk0ZC00OTRkLTk2ODYtYjFkMWU1OTk0Y2EzOmEyNzU5MDFjLWQxMjktNDRlZC1iNTFjLWY5M2VhZjU5NzMxYg== -url https://52.213.63.19 -trusthttps -projectVersionUrl https://52.213.63.29/api/projects/2b8e2496-891a-42b7-abcd-5ae0cd527fd7/versions/32b7d1da-e62d-41a6-845d-29b7add91428
+ * Usage Example : java -cp target\blackduck-java-api-examples-2021.11.0-jar-with-dependencies.jar com.synopsys.blackduck.examples.ListAllCopyrightsForProjectVersion -apikey ZGY4MWU1ZjktMzk0ZC00OTRkLTk2ODYtYjFkMWU1OTk0Y2EzOmEyNzU5MDFjLWQxMjktNDRlZC1iNTFjLWY5M2VhZjU5NzMxYg== -url https://52.213.63.19 -trusthttps -projectVersionUrl https://52.213.63.29/api/projects/2b8e2496-891a-42b7-abcd-5ae0cd527fd7/versions/32b7d1da-e62d-41a6-845d-29b7add91428
  *
  * @author David Nicholls - Synopsys Black Duck Technical Architect
  */
@@ -112,17 +112,22 @@ public class ListAllCopyrightsForProjectVersion extends ValidateBlackDuckConnect
     public void handleComponentOrigin(BlackDuckRestConnector restConnector, ProjectVersionComponentView component, String originName, HttpUrl originUrl, Stats stats) {
         // For each origin get the copyrights
         Optional<List<ComponentVersionOriginCopyright>> copyrights = getCopyrightsForOrigin(restConnector, originUrl);
+        int activeCount = 0;
         if (copyrights.isPresent() && copyrights.get().size() > 0) {
             // For each copyright list it.
             for (ComponentVersionOriginCopyright copyright : copyrights.get()) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(component.getComponentName()).append(",");
-                sb.append(originName).append(",");
-                sb.append(copyright.getKbCopyright().replace("\n", " ").replace("\r", " "));
-                log.info(sb.toString());
-                stats.copyrights++;
+                if (copyright.active) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(component.getComponentName()).append(",");
+                    sb.append(originName).append(",");
+                    sb.append(copyright.getKbCopyright().replace("\n", " ").replace("\r", " "));
+                    log.info(sb.toString());
+                    stats.copyrights++;
+                    activeCount++;
+                }
             }
-        } else {
+        }
+        if (activeCount == 0) {
             log.info("No copyrights for component [" + component.getComponentName() + "] origin [" + originUrl.string() + "]");
         }
     }
