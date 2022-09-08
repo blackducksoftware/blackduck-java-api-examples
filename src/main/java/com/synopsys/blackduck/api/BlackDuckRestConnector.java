@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static com.synopsys.integration.blackduck.configuration.BlackDuckServerConfigKeys.KEYS;
+
 /**
  * Rest Connector, connects to a Black Duck server and creates a service for calling and factory for creating more specific services e.g. License Service.
  *
@@ -60,7 +62,7 @@ public class BlackDuckRestConnector {
      * @return BlackDuckServerConfig for use by blackduck-common.
      */
     private BlackDuckServerConfig createBlackDuckServerConfig(BlackDuckInstance blackDuckInstance) {
-        final BlackDuckServerConfigBuilder builder = new BlackDuckServerConfigBuilder();
+        final BlackDuckServerConfigBuilder builder = new BlackDuckServerConfigBuilder(KEYS.apiToken);
         builder.setUrl(blackDuckInstance.getServerUrl());
         builder.setApiToken(blackDuckInstance.getApiToken());
         builder.setTimeoutInSeconds(blackDuckInstance.getTimeoutInSeconds());

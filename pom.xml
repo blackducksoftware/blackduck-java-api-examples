@@ -6,7 +6,7 @@
 
     <groupId>com.synopsys.integration</groupId>
     <artifactId>blackduck-java-api-examples</artifactId>
-    <version>2021.11.0</version>
+    <version>2022.9.0</version>
 
     <packaging>jar</packaging>
 
@@ -21,11 +21,19 @@
         <dependency>
             <groupId>com.synopsys.integration</groupId>
             <artifactId>blackduck-common</artifactId>
-            <version>59.0.3</version>
+            <version>65.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.blackducksoftware.bdio</groupId>
                     <artifactId>bdio2</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.synopsys.integration</groupId>
+                    <artifactId>phone-home-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-compress</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -37,12 +45,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.32</version>
+            <version>1.7.36</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.32</version>
+            <version>1.7.36</version>
         </dependency>
     </dependencies>
 

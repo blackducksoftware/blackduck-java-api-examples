@@ -12,7 +12,6 @@ import com.synopsys.integration.blackduck.service.dataservice.ProjectService;
 import com.synopsys.integration.exception.IntegrationException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
-import org.apache.commons.compress.utils.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +58,7 @@ public class ListProjectsNotAssociatedWithUserGroup extends ValidateBlackDuckCon
         } catch (IntegrationException e) {
             log.error("Failed to load roles for user group [" + userGroup.getName() + "] due to : " + e.getMessage(), e);
         }
-        return Lists.newArrayList();
+        return new ArrayList<>();
     }
 
     public Collection<ProjectView> findProjectsNotReferencedInAnyUserGroup(BlackDuckRestConnector restConnector) throws IntegrationException {
