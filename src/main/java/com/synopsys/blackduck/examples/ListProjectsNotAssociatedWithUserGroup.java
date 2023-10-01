@@ -5,7 +5,7 @@ import com.synopsys.blackduck.api.BlackDuckRestConnector;
 import com.synopsys.blackduck.util.BlackDuckViewUtils;
 import com.synopsys.integration.blackduck.api.core.ResourceLink;
 import com.synopsys.integration.blackduck.api.core.response.UrlMultipleResponses;
-import com.synopsys.integration.blackduck.api.generated.view.ProjectView;
+import com.synopsys.integration.blackduck.api.manual.view.ProjectView;
 import com.synopsys.integration.blackduck.api.generated.view.RoleAssignmentView;
 import com.synopsys.integration.blackduck.api.generated.view.UserGroupView;
 import com.synopsys.integration.blackduck.service.dataservice.ProjectService;

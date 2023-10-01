@@ -65,6 +65,7 @@ usage: apikey
 - com.synopsys.blackduck.examples.GenericGetSingleItemByHref - Load the JSON for a Black Duck object given the URL.
 - com.synopsys.blackduck.examples.GetProjectWithVersionsAndTagsByName - Load a project along with versions, tags and custom field values given the project name.
 - com.synopsys.blackduck.examples.GetUserAndAssignmentsByUsername - Load a user by username along with their roles and user group membership.
+- com.synopsys.blackduck.examples.GetBomReportForProjectVersion - Download SPDX Bill of Materials Report from Black Duck
 - com.synopsys.blackduck.examples.ListBillOfMaterialsForProjectVersion - List the components in the Bill of Materials for a project version.
 - com.synopsys.blackduck.examples.ListProjects - List all projects.
 - com.synopsys.blackduck.examples.ListProjectsAndApplicationId - List projects and the projects application ID to CSV file.
