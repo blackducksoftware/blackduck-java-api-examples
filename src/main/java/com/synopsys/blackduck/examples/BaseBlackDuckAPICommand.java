@@ -23,7 +23,6 @@ class BaseBlackDuckAPICommand {
     static final String INTERNAL_API_HEADER_VALUE = "application/vnd.blackducksoftware.internal-1+json";
 
     static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-    static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
 
     public static final String SEPARATOR = ",";
 
@@ -86,7 +85,7 @@ class BaseBlackDuckAPICommand {
      */
     static Date fromTimestampString(String timestamp) {
         try {
-            return DATE_FORMATTER.parse(timestamp);
+            return (new SimpleDateFormat(DATE_FORMAT)).parse(timestamp);
         } catch (java.text.ParseException e) {
             log.error("Failed to parse timestamp [" + timestamp + "] due to : " + e.getMessage(), e);
             return null;
